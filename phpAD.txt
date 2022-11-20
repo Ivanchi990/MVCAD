@@ -1,0 +1,36 @@
+CREATE USER "admin"@"localhost" IDENTIFIED BY "Alumno_2020";
+
+CREATE DATABASE basePHP;
+USE basePHP;
+
+GRANT ALL PRIVILEGES ON basePHP.* TO "admin"@"localhost" WITH GRANT OPTION;
+
+create table usuarios(
+nombre varchar(50),
+contraseña varchar(25),
+dni varchar(9),
+fechaNac date,
+PRIMARY KEY (dni)
+);
+
+create table vuelos(
+idVuelo int,
+ciudadOrigen varchar(30),
+aeropuertoOrigen varchar(5),
+fechaSalida datetime,
+ciudadDestino varchar(30),
+aeropuertoDestino varchar(5),
+fechaLlegada datetime,
+plazas int,
+PRIMARY KEY (idVuelo)
+);
+
+create table reservas(
+idUsuario varchar(9),
+idVuelo int,
+plazas int,
+FOREIGN KEY(idUsuario) REFERENCES usuarios(dni),
+FOREIGN KEY(idVuelo) REFERENCES vuelos(idVuelo)
+);
+
+insert into usuarios values("julito", "buenas123", "50987623G", "1987-12-12");

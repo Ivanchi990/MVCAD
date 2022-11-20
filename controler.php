@@ -1,16 +1,18 @@
 <?php
 
-function showContent() 
+include_once("model.php");
+
+function showContent()
 {
-	if ($_SERVER['REQUEST_METHOD'] == 'GET') 
+	if ($_SERVER['REQUEST_METHOD'] == 'GET')
 	{
 		if (!isset($_GET['cmd']))
 		{
 			showLogin();
 		}
-		else 
+		else
 		{
-			switch ($_GET['cmd']) 
+			switch ($_GET['cmd'])
 			{
 				case 'crearReserva':
 					showCrearReserva();
@@ -24,51 +26,67 @@ function showContent()
 					showMostrarVuelos();
 					break;
 
-				case 'borrarUsuario';
+				case 'borrarUsuario':
 					showEliminarUsuario();
+					break;
+
+				case 'buscarAeropuertos':
+					busquedaAeropuertos();
 					break;
 
 				case 'logout':
 					showLogin();
 					break;
 
+				case 'home':
+					showOpciones();
+					break;
+
 				default:
-					showMsg("Error, operación no permitida");
+					showMsg("Lo siento, esa operación no estaba contemplada.");
 					break;
 			}
 		}
 	}
-	else 
-	{	
-		if (isset($_POST['login'])) 
+	else
+	{
+		if (isset($_POST['login']))
 		{
-			if (isset($_SESSION['user'])) 
-			{								
+			if (isset($_SESSION['user']))
+			{
                 showOpciones();
-			}   
-			else 
+			}
+			else
 			{
 				showLogin();
 			}
 		}
+		elseif(isset($_POST['busquedaAero']))
+		{
+			buscarAero($_POST["aero1"], $_POST["aero2"]);
+		}
 	}
 }
 
-function actualizar_sesion() 
+function actualizar_sesion()
 {
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') 
+	if ($_SERVER['REQUEST_METHOD'] == 'POST')
 	{
-		if (isset($_POST['login'])) 
+		if (isset($_POST['login']))
 		{
-			if (loginValido()) 
+			if (loginValido())
 			{
-				$_SESSION['user'] = $_POST['user'];					
+				$_SESSION['user'] = $_POST['user'];
+			}
+			else
+			{
+				showMsg("Vaya, parece que el usuario no esta registrado");
 			}
 		}
 	}
-	if (isset($_GET['cmd'])) 
+	if (isset($_GET['cmd']))
 		{
-			if  ($_GET['cmd'] == 'logout') 
+			if  ($_GET['cmd'] == 'logout')
 			{
 				unset($_SESSION);
 				session_destroy();
