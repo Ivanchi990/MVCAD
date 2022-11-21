@@ -142,19 +142,12 @@ function showReservas()
                 echo"<td>" .$row["Destino"]. "</td>";
                 echo"<td>" .$row["FechaLlegada"]. "</td>";
                 echo"<td>" .$row["PlazasReservadas"]. "</td>";
-                echo"<td><button onClick='clickMe()'>Eliminar</button></td>";
-                echo
-                "
-                    <script type='text/javascript'>
-                        function clickMe()
-                        {
-                            var result ='<?php
-                                include('model.php');
-                                eliminarReserva(".$row["idVuelo"].");
-                            ?>';
-                        }
-                    </script>
-                ";
+                echo"<td>
+                    <form action='index.php' method='post' role='form'>
+                        <input type='text' name='idVuelo' value='".$row["idVuelo"]."' style='visibility: hidden;'>
+                        <button type='submit' name='borrar'>Borrar</button>
+                    </form>
+                </td>";
             echo'</tr>';
         }
     echo
@@ -191,6 +184,6 @@ function eliminarReserva($idVuelo)
 
     $mysqli->query($delete);
 
-    echo '<script type="text/JavaScript">location.reload();</script>';
+    header('Location: http://localhost/MVCAD/index.php?cmd=mostrarReservas');
 }
 ?>

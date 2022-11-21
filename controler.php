@@ -65,6 +65,10 @@ function showContent()
 		{
 			buscarAero($_POST["aero1"], $_POST["aero2"]);
 		}
+		elseif(isset($_POST['borrar']))
+		{
+			eliminarReserva($_POST['idVuelo']);
+		}
 	}
 }
 
