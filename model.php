@@ -156,6 +156,105 @@ function showReservas()
     ';
 }
 
+function buscarAeroFecha($ciudad1, $ciudad2, $fecha1, $fecha2)
+{
+    require("conexion.php");
+
+    $query = "SELECT * FROM vuelos WHERE ciudadOrigen = '$ciudad1' and ciudadDestino = '$ciudad2' and time(fechaSalida) between '$fecha1' and '$fecha2'";
+
+    $result = $mysqli->query($query);
+
+    echo
+    '
+    <h1>Vuelos</h1>
+    <table border="1">
+        <tr>
+            <td>Ciudad salida</td>
+            <td>Fecha salida</td>
+            <td>Ciudad llegada</td>
+            <td>Fecha llegada</td>
+            <td>Plazas Disponibles</td>
+            <td>Reservar</td>
+        </tr>
+    ';
+        while($row = $result->fetch_assoc())
+        {
+            echo'<tr>';
+                echo"<td>" .$row["ciudadOrigen"]. "</td>";
+                echo"<td>" .$row["fechaSalida"]. "</td>";
+                echo"<td>" .$row["ciudadDestino"]. "</td>";
+                echo"<td>" .$row["fechaLlegada"]. "</td>";
+                echo"<td>" .$row["plazas"]. "</td>";
+                echo"<td>
+                    <form action='index.php' method='post' role='form'>
+                        <label></label>
+                        <input type='number' name='plazas'>
+                        <input type='text' name='idVuelo' value='".$row["idVuelo"]."' style='visibility: hidden;'>
+                        <button type='submit' name='reservarVuelo'>Reservar</button>
+                    </form>
+                </td>";
+            echo'</tr>';
+        }
+    echo
+    '
+        </table>
+    ';
+}
+
+function showBusquedaCiudadFecha()
+{
+    require("conexion.php");
+
+    $query = "SELECT distinct(ciudadOrigen) FROM vuelos";
+
+    $result = $mysqli->query($query);
+
+    echo
+    '
+        <form action="index.php" method="post" role="form">
+            <h2>Busqueda según ciudades y fechas</h2>
+            <br>
+            <label>Ciudad origen</label>
+            <select name="ciudad1">
+    ';
+
+        while($row = $result->fetch_assoc())
+        {
+            echo "<option value='" .$row["ciudadOrigen"]. "'>" .$row["ciudadOrigen"]. "</option>";
+        }
+
+    echo
+    '
+        </select>
+        <br><br>
+        <label>Ciudad destino</label>
+        <select name="ciudad2">
+    ';
+        $query = "SELECT distinct(ciudadDestino) FROM vuelos";
+
+        $result = $mysqli->query($query);
+
+        while($row = $result->fetch_assoc())
+        {
+            echo "<option value='" .$row["ciudadDestino"]. "'>" .$row["ciudadDestino"]. "</option>";
+        }
+
+    echo
+    '
+        </select>
+        <br><br>
+        <label>Fecha salida</label>
+        <input type="time" name="fecha1">
+        <br><br>
+        <label>Fecha llegada</label>
+        <input type="time" name="fecha2">
+        <br><br>
+        <button type="submit" name="busquedaAeroFecha">Buscar</button>
+        <br><br>
+    </form>
+    ';
+}
+
 function eliminarReserva($idVuelo)
 {
     require("conexion.php");
@@ -185,5 +284,47 @@ function eliminarReserva($idVuelo)
     $mysqli->query($delete);
 
     header('Location: http://localhost/MVCAD/index.php?cmd=mostrarReservas');
+}
+
+
+function crearReserva($idVuelo, $plazas)
+{
+    require("conexion.php");
+
+    $user = $_SESSION["user"];
+
+    $d = "SELECT dni FROM usuarios WHERE nombre = '$user'";
+
+    $r = $mysqli->query($d);
+
+    $re = $r->fetch_assoc();
+
+    $dni = $re['dni'];
+
+    $antiguo = "SELECT plazas FROM vuelos where idVuelo = '$idVuelo'";
+
+    $resultA = $mysqli->query($antiguo);
+
+    $ro2 = $resultA->fetch_assoc();
+
+    if($ro2['plazas'] > 0)
+    {
+        $p = $ro2["plazas"] - $plazas;
+
+        $update = "UPDATE vuelos SET plazas = '$p' WHERE idVuelo = '$idVuelo'";
+
+        $mysqli->query($update);
+
+        $insert = "INSERT INTO reservas VALUES('$dni', '$idVuelo', '$plazas')";
+
+        $mysqli->query($insert);
+
+        header('Location: http://localhost/MVCAD/index.php?cmd=mostrarReservas');
+    }
+    else
+    {
+        showMsg("Vaya, parece que no se pueden realizar mas reservas en ese vuelo");
+        header('Location: http://localhost/MVCAD/index.php?cmd=listarVuelos');
+    }
 }
 ?>

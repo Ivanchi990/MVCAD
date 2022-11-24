@@ -34,6 +34,10 @@ function showContent()
 					busquedaAeropuertos();
 					break;
 
+				case 'buscarCiudadFecha':
+					showBusquedaCiudadFecha();
+					break;
+
 				case 'logout':
 					showLogin();
 					break;
@@ -69,6 +73,18 @@ function showContent()
 		{
 			eliminarReserva($_POST['idVuelo']);
 		}
+		elseif(isset($_POST['crearReserva']))
+		{
+			crearReserva($_POST['idVuelo'], $_POST['plazas']);
+		}
+		elseif(isset($_POST['busquedaAeroFecha']))
+		{
+			buscarAeroFecha($_POST['ciudad1'], $_POST['ciudad2'], $_POST['fecha1'], $_POST['fecha2']);
+		}
+		elseif(isset($_POST['reservarVuelo']))
+		{
+			crearReserva($_POST['idVuelo'], $_POST['plazas']);
+		}
 	}
 }
 
@@ -89,12 +105,12 @@ function actualizar_sesion()
 		}
 	}
 	if (isset($_GET['cmd']))
+	{
+		if  ($_GET['cmd'] == 'logout')
 		{
-			if  ($_GET['cmd'] == 'logout')
-			{
-				unset($_SESSION);
-				session_destroy();
-			}
+			unset($_SESSION);
+			session_destroy();
 		}
+	}
 }
 ?>

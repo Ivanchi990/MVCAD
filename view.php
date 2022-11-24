@@ -11,10 +11,15 @@ function showHeader()
                 <link rel="stylesheet" type="text/css" href="estilos.css">
                 <meta charset= "utf-8">
             </head>
-        <body>
-
+        <body style="background-color:orange;">
+        <style>
+            button{
+            background-color: green;
+            }
+        </style>
         <button><a href="index.php?cmd=logout" class="btn">Logout</a></button>
         <button><a href="index.php?cmd=home" class="btn">Home</a></button>
+        <h1>Vuelos PHP</h1>
     ';
 }
 
@@ -52,7 +57,7 @@ function showOpciones()
             <button><a href="index.php?cmd=listarVuelos" class="btn">Listar vuelos</a></button>
             <br>
             <label>Borrar usuario</label>
-            <button><a href="index.php?cmd=borrarUsuario" class="btn">Borrar vuelo</a></button>
+            <button><a href="index.php?cmd=borrarUsuario" class="btn">Borrar usuario</a></button>
         </div>
     ';
 }
@@ -62,7 +67,16 @@ function showCrearReserva()
 {
     echo
     '
-
+        <h1>Crear reserva</h1>
+        <form action="index.php" method="post" role="form">
+            <label>ID vuelo: </label>
+            <input type="text" name="idVuelo" placeholder="Introduce la id del vuelo">
+            <br>
+            <label>Número de plazas: </label>
+            <input type="number" name="plazas">
+            <br>
+            <button name="crearReserva" type="submit">Crear</button>
+        </form>
     ';
 }
 
