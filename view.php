@@ -98,16 +98,6 @@ function showMostrarVuelos()
     ';
 }
 
-
-function showEliminarUsuario()
-{
-    echo
-    '
-
-    ';
-}
-
-
 function showFooter()
 {
     echo

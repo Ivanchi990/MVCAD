@@ -26,10 +26,6 @@ function showContent()
 					showMostrarVuelos();
 					break;
 
-				case 'borrarUsuario':
-					showEliminarUsuario();
-					break;
-
 				case 'buscarAeropuertos':
 					busquedaAeropuertos();
 					break;
@@ -44,6 +40,10 @@ function showContent()
 
 				case 'home':
 					showOpciones();
+					break;
+
+				case 'borrarUsuario':
+					eliminarUsuario();
 					break;
 
 				default:

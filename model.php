@@ -1,4 +1,5 @@
 <?php
+
 function loginValido()
 {
     require("conexion.php");
@@ -188,7 +189,7 @@ function buscarAeroFecha($ciudad1, $ciudad2, $fecha1, $fecha2)
                 echo"<td>
                     <form action='index.php' method='post' role='form'>
                         <label></label>
-                        <input type='number' name='plazas'>
+                        <input type='number' name='plazas' required='required'>
                         <input type='text' name='idVuelo' value='".$row["idVuelo"]."' style='visibility: hidden;'>
                         <button type='submit' name='reservarVuelo'>Reservar</button>
                     </form>
@@ -291,25 +292,31 @@ function crearReserva($idVuelo, $plazas)
 {
     require("conexion.php");
 
-    $user = $_SESSION["user"];
+    $com = "SELECT * FROM vuelos WHERE idVuelo = '$idVuelo'";
 
-    $d = "SELECT dni FROM usuarios WHERE nombre = '$user'";
+    $res = $mysqli->query($com);
 
-    $r = $mysqli->query($d);
+    $reso = $res->fetch_assoc();
 
-    $re = $r->fetch_assoc();
-
-    $dni = $re['dni'];
-
-    $antiguo = "SELECT plazas FROM vuelos where idVuelo = '$idVuelo'";
-
-    $resultA = $mysqli->query($antiguo);
-
-    $ro2 = $resultA->fetch_assoc();
-
-    if($ro2['plazas'] > 0)
+    if($reso['plazas'] >= $plazas)
     {
-        $p = $ro2["plazas"] - $plazas;
+        $user = $_SESSION["user"];
+
+        $d = "SELECT dni FROM usuarios WHERE nombre = '$user'";
+
+        $r = $mysqli->query($d);
+
+        $re = $r->fetch_assoc();
+
+        $dni = $re['dni'];
+
+        $antiguo = "SELECT plazas FROM vuelos where idVuelo = '$idVuelo'";
+
+        $resultA = $mysqli->query($antiguo);
+
+        $ro2 = $resultA->fetch_assoc();
+
+        $p = (int)$ro2["plazas"] - (int)$plazas;
 
         $update = "UPDATE vuelos SET plazas = '$p' WHERE idVuelo = '$idVuelo'";
 
@@ -318,13 +325,27 @@ function crearReserva($idVuelo, $plazas)
         $insert = "INSERT INTO reservas VALUES('$dni', '$idVuelo', '$plazas')";
 
         $mysqli->query($insert);
-
         header('Location: http://localhost/MVCAD/index.php?cmd=mostrarReservas');
-    }
+        }
     else
     {
-        showMsg("Vaya, parece que no se pueden realizar mas reservas en ese vuelo");
-        header('Location: http://localhost/MVCAD/index.php?cmd=listarVuelos');
+        header('Location: http://localhost/MVCAD/index.php?cmd=home');
     }
+}
+
+
+function eliminarUsuario()
+{
+    require("conexion.php");
+
+    $user = $_SESSION["user"];
+
+    $query = "DELETE FROM reservas WHERE idUsuario = (SELECT dni FROM usuarios WHERE nombre = '$user')";
+
+    $mysqli->query($query);
+
+    $query = "DELETE FROM usuarios WHERE dni = (SELECT dni FROM usuarios WHERE nombre = '$user')";
+
+    $mysqli->query($query);
 }
 ?>
