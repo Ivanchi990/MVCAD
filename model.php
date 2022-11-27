@@ -283,8 +283,6 @@ function eliminarReserva($idVuelo)
     $delete = "DELETE FROM reservas WHERE idVuelo = '$idVuelo' and idUsuario = (SELECT dni FROM usuarios WHERE nombre = '$user')";
 
     $mysqli->query($delete);
-
-    header('Location: http://localhost/MVCAD/index.php?cmd=mostrarReservas');
 }
 
 
@@ -325,11 +323,13 @@ function crearReserva($idVuelo, $plazas)
         $insert = "INSERT INTO reservas VALUES('$dni', '$idVuelo', '$plazas')";
 
         $mysqli->query($insert);
-        header('Location: http://localhost/MVCAD/index.php?cmd=mostrarReservas');
+
+		header('Location: http://localhost/MVCAD/index.php?cmd=mostrarReservas');
         }
     else
     {
         header('Location: http://localhost/MVCAD/index.php?cmd=home');
+        showMsg("Vaya, parece que no hay plazas disponibles en el vuelo.");
     }
 }
 
@@ -340,12 +340,20 @@ function eliminarUsuario()
 
     $user = $_SESSION["user"];
 
-    $query = "DELETE FROM reservas WHERE idUsuario = (SELECT dni FROM usuarios WHERE nombre = '$user')";
+    $query = "SELECT * FROM reservas WHERE idUsuario = (SELECT dni FROM usuarios WHERE nombre = '$user')";
 
-    $mysqli->query($query);
+    $result = $mysqli->query($query);
 
-    $query = "DELETE FROM usuarios WHERE dni = (SELECT dni FROM usuarios WHERE nombre = '$user')";
+    while($row = $result->fetch_assoc())
+    {
+        eliminarReserva($row['idVuelo']);
+    }
 
-    $mysqli->query($query);
+    $eliminar = "DELETE FROM usuarios WHERE nombre = '$user'";
+
+    $mysqli->query($eliminar);
+
+    actualizar_sesion();
+    header('Location: http://localhost/MVCAD/index.php?cmd=logout');
 }
 ?>
